@@ -211,27 +211,41 @@ final class WhatsAppCloudApiTest extends TestCase
         $this->assertEquals(false, $response->isError());
     }
 
-	public function test_send_list()
-	{
-		$rows = [
-			new Row('1', '⭐️', "Experience wasn't good enough"),
-			new Row('2', '⭐⭐️', "Experience could be better"),
-			new Row('3', '⭐⭐⭐️', "Experience was ok"),
-			new Row('4', '⭐⭐️⭐⭐', "Experience was good"),
-			new Row('5', '⭐⭐️⭐⭐⭐️', "Experience was excellent"),
-		];
-		$sections = [new Section('Stars', $rows)];
-		$action = new Action('Submit', $sections);
+    public function test_send_contact_with_waid()
+    {
+        $contact_name = new ContactName('Adams', 'Smith');
+        $phone = new Phone(WhatsAppCloudApiTestConfiguration::$contact_phone_number, PhoneType::CELL(), WhatsAppCloudApiTestConfiguration::$contact_waid);
+        $response = $this->whatsapp_app_cloud_api->sendContact(
+            WhatsAppCloudApiTestConfiguration::$to_phone_number_id,
+            $contact_name,
+            $phone
+        );
 
-		$response = $this->whatsapp_app_cloud_api->sendList(
-			WhatsAppCloudApiTestConfiguration::$to_phone_number_id,
-			'Rate your experience',
-			'Please consider rating your shopping experience in our website',
-			'Thanks for your time',
-			$action
-		);
+        $this->assertEquals(200, $response->httpStatusCode());
+        $this->assertEquals(false, $response->isError());
+    }
 
-		$this->assertEquals(200, $response->httpStatusCode());
-		$this->assertEquals(false, $response->isError());
-	}
+    public function test_send_list()
+	  {
+        $rows = [
+          new Row('1', '⭐️', "Experience wasn't good enough"),
+          new Row('2', '⭐⭐️', "Experience could be better"),
+          new Row('3', '⭐⭐⭐️', "Experience was ok"),
+          new Row('4', '⭐⭐️⭐⭐', "Experience was good"),
+          new Row('5', '⭐⭐️⭐⭐⭐️', "Experience was excellent"),
+        ];
+        $sections = [new Section('Stars', $rows)];
+        $action = new Action('Submit', $sections);
+
+        $response = $this->whatsapp_app_cloud_api->sendList(
+          WhatsAppCloudApiTestConfiguration::$to_phone_number_id,
+          'Rate your experience',
+          'Please consider rating your shopping experience in our website',
+          'Thanks for your time',
+          $action
+        );
+
+        $this->assertEquals(200, $response->httpStatusCode());
+        $this->assertEquals(false, $response->isError());
+	  }
 }
